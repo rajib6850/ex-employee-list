@@ -18,8 +18,9 @@
 
 defined('ABSPATH') or die('No access permission to direct folder or file');
 
+// Require Main Class file 
+require_once plugin_dir_path( __FILE__ ). "/classes/class-employee-list.php";
 
 
-
-
+$Employee = new ClassEmployeeList();
     
