@@ -17,10 +17,11 @@
 */
 
 defined('ABSPATH') or die('No access permission to direct folder or file');
-
+define('PLUGIN_DIR', WP_PLUGIN_DIR."/ex-employee-list/");
+define('PLUGIN_URL', WP_PLUGIN_URL."/ex-employee-list/");
+define('PLUGIN_FILE', WP_PLUGIN_DIR."/ex-employee-list/ex-employee-list.php");
 // Require Main Class file 
 require_once plugin_dir_path( __FILE__ ). "/classes/class-employee-list.php";
 
 
 $Employee = new ClassEmployeeList();
-    

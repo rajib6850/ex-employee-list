@@ -5,20 +5,28 @@
 final class ClassEmployeeList
 {
 
+
+    private $version;
+
     public function __construct()
     {
 
         add_action('init', [$this, 'ex_employee_default_init']);
+        add_action( 'add_meta_boxes', [$this, 'add_meta_box_for_employee_info' ]);
+        add_action('admin_enqueue_scripts', [$this, 'add_style_and_script_file_for_employee_metabox']);
 
-
+        if( ! function_exists('get_plugin_data') ){
+            require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+        }
+        $plugin_data = get_plugin_data( PLUGIN_FILE );
+        $this->version = $plugin_data['Version'];
+        
     }
 
 
-    public function ex_employee_default_init()
-    {
+    public function ex_employee_default_init(){
 
         // Post type: Employees
-
         $labels = array(
             'name' => _x('Employees', 'Post Type General Name', 'ex-employee-list'),
             'singular_name' => _x('Employees', 'Post Type Singular Name', 'ex-employee-list'),
@@ -74,8 +82,6 @@ final class ClassEmployeeList
         register_post_type('ex_employee', $args);
 
 
-
-
         $labels = array(
             'name'                       => _x('Types', 'taxonomy general name', 'ex-employee-list'),
             'singular_name'              => _x('Type', 'taxonomy singular name', 'ex-employee-list'),
@@ -106,4 +112,54 @@ final class ClassEmployeeList
         register_taxonomy('ex_employee_type', array('ex_employee'), $args);
 
     }
+
+
+    public function add_meta_box_for_employee_info(){
+        add_meta_box( 'ex_employee_info', __( "Employee Info", 'ex-employee-list' ), [$this, 'employee_metabox_admin_html_output'], 'ex_employee', 'advanced', 'high' );
+    }
+
+    public function employee_metabox_admin_html_output(){?>
+
+        
+<div class="container" id="employee_meta_box_fields">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="vertical-tab" role="tabpanel">
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active"><a href="#Section1" aria-controls="home" role="tab" data-toggle="tab">Section 1</a></li>
+                    <li role="presentation"><a href="#Section2" aria-controls="profile" role="tab" data-toggle="tab">Section 2</a></li>
+                    <li role="presentation"><a href="#Section3" aria-controls="messages" role="tab" data-toggle="tab">Section 3</a></li>
+                </ul>
+                <!-- Tab panes -->
+                <div class="tab-content tabs">
+                    <div role="tabpanel" class="tab-pane fade in active" id="Section1">
+                        <h3>Section 1</h3>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce semper, magna a ultricies volutpat, mi eros viverra massa, vitae consequat nisi justo in tortor. Proin accumsan felis ac felis dapibus, non iaculis mi varius, mi eros viverra massa.</p>
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="Section2">
+                        <h3>Section 2</h3>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce semper, magna a ultricies volutpat, mi eros viverra massa, vitae consequat nisi justo in tortor. Proin accumsan felis ac felis dapibus, non iaculis mi varius, mi eros viverra massa.</p>
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="Section3">
+                        <h3>Section 3</h3>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce semper, magna a ultricies volutpat, mi eros viverra massa, vitae consequat nisi justo in tortor. Proin accumsan felis ac felis dapibus, non iaculis mi varius, mi eros viverra massa.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+    <?php }
+
+
+    public function add_style_and_script_file_for_employee_metabox(){
+        wp_enqueue_script( 'ex_employee_bootstra_file', PLUGIN_URL."assets/js/bootstrap.min.js", ['jquery'],  $this->version , true );
+        wp_enqueue_style( 'ex_employee_style_file', PLUGIN_URL.'assets/css/style.css', [], $this->version, 'all' );
+    }
+
+
 }
