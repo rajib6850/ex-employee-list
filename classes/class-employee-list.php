@@ -12,19 +12,28 @@ final class ClassEmployeeList
     {
 
         add_action('init', [$this, 'ex_employee_default_init']);
-        add_action( 'add_meta_boxes', [$this, 'add_meta_box_for_employee_info' ]);
+        add_action('add_meta_boxes', [$this, 'add_meta_box_for_employee_info']);
         add_action('admin_enqueue_scripts', [$this, 'add_style_and_script_file_for_employee_metabox']);
+        add_action('save_post', [$this, 'ex_employee_metadata_save']);
 
-        if( ! function_exists('get_plugin_data') ){
-            require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+        if (!function_exists('get_plugin_data')) {
+            require_once(ABSPATH . 'wp-admin/includes/plugin.php');
         }
-        $plugin_data = get_plugin_data( PLUGIN_FILE );
+        $plugin_data = get_plugin_data(PLUGIN_FILE);
         $this->version = $plugin_data['Version'];
-        
+    }
+
+    public function add_style_and_script_file_for_employee_metabox()
+    {
+        wp_enqueue_script('jquery');
+        wp_enqueue_script('ex_employee_bootstra_file', PLUGIN_URL . "assets/js/bootstrap.min.js", ['jquery'],  $this->version, true);
+        wp_enqueue_script("ex_employee_custom_script", PLUGIN_URL . "assets/js/custom.js", ['jquery'], $this->version, true);
+        wp_enqueue_style('ex_employee_style_file', PLUGIN_URL . 'assets/css/style.css', [], $this->version, 'all');
     }
 
 
-    public function ex_employee_default_init(){
+    public function ex_employee_default_init()
+    {
 
         // Post type: Employees
         $labels = array(
@@ -110,56 +119,80 @@ final class ClassEmployeeList
 
         // Register the Type
         register_taxonomy('ex_employee_type', array('ex_employee'), $args);
-
     }
 
 
-    public function add_meta_box_for_employee_info(){
-        add_meta_box( 'ex_employee_info', __( "Employee Info", 'ex-employee-list' ), [$this, 'employee_metabox_admin_html_output'], 'ex_employee', 'advanced', 'high' );
+    public function add_meta_box_for_employee_info()
+    {
+        add_meta_box('ex_employee_info', __("Employee Info", 'ex-employee-list'), [$this, 'employee_metabox_admin_html_output'], 'ex_employee', 'advanced', 'high');
     }
 
-    public function employee_metabox_admin_html_output(){?>
+    public function employee_metabox_admin_html_output($post){ 
+        wp_nonce_field( 'employee_metabox_verify', 'ex_metabox_nonce' );
+        $employee_info = [
+            'employee_name',
+            'employee_call',
+            'employee_email',
+            'employee_gender',
+            'employee_date_of_birth',
+            'employee_address',
+            'employee_job_title',
+            'employee_salary'
+        ];
+    
+    
+        foreach ($employee_info as $value) {
+            $checkValue = get_post_meta($post->ID, '_'.$value, true);
+    
+    
+            if(isset($checkValue)){
+                $$value = $checkValue;
+            }
+    
+        }
 
+        require_once PLUGIN_DIR."template/employee-info-metabox-html-output.php";
+
+     }
+
+    public function ex_employee_metadata_save( $post_id ){
+
+        // prefix
+        $prefix = "_employee_";
+
+        /* Verify the nonce before proceeding. \*/
+        if(!isset($_POST['ex_metabox_nonce']) || wp_verify_nonce( 'ex_metabox_nonce', ' employee_metabox_verify' )){
+            return ;
+        }
+
+        // Check User Capability
+        if(!current_user_can('edit_post', $post_id)){
+            return;
+        }
+
+
+        // Create an array with metabox input name
+        $employee_info = [
+            'employee_name',
+            'employee_call',
+            'employee_email',
+            'employee_gender',
+            'employee_date_of_birth',
+            'employee_address',
+            'employee_job_title',
+            'employee_salary'
+        ];
         
-<div class="container" id="employee_meta_box_fields">
-    <div class="row">
-        <div class="col-md-6">
-            <div class="vertical-tab" role="tabpanel">
-                <!-- Nav tabs -->
-                <ul class="nav nav-tabs" role="tablist">
-                    <li role="presentation" class="active"><a href="#Section1" aria-controls="home" role="tab" data-toggle="tab">Section 1</a></li>
-                    <li role="presentation"><a href="#Section2" aria-controls="profile" role="tab" data-toggle="tab">Section 2</a></li>
-                    <li role="presentation"><a href="#Section3" aria-controls="messages" role="tab" data-toggle="tab">Section 3</a></li>
-                </ul>
-                <!-- Tab panes -->
-                <div class="tab-content tabs">
-                    <div role="tabpanel" class="tab-pane fade in active" id="Section1">
-                        <h3>Section 1</h3>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce semper, magna a ultricies volutpat, mi eros viverra massa, vitae consequat nisi justo in tortor. Proin accumsan felis ac felis dapibus, non iaculis mi varius, mi eros viverra massa.</p>
-                    </div>
-                    <div role="tabpanel" class="tab-pane fade" id="Section2">
-                        <h3>Section 2</h3>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce semper, magna a ultricies volutpat, mi eros viverra massa, vitae consequat nisi justo in tortor. Proin accumsan felis ac felis dapibus, non iaculis mi varius, mi eros viverra massa.</p>
-                    </div>
-                    <div role="tabpanel" class="tab-pane fade" id="Section3">
-                        <h3>Section 3</h3>
-                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce semper, magna a ultricies volutpat, mi eros viverra massa, vitae consequat nisi justo in tortor. Proin accumsan felis ac felis dapibus, non iaculis mi varius, mi eros viverra massa.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+        foreach ($employee_info as $value) {
 
+            $$value = isset($_POST[$value]) ? sanitize_text_field($_POST[$value]) : '';
 
-
-    <?php }
-
-
-    public function add_style_and_script_file_for_employee_metabox(){
-        wp_enqueue_script( 'ex_employee_bootstra_file', PLUGIN_URL."assets/js/bootstrap.min.js", ['jquery'],  $this->version , true );
-        wp_enqueue_style( 'ex_employee_style_file', PLUGIN_URL.'assets/css/style.css', [], $this->version, 'all' );
+            if($$value != ''){
+                update_post_meta( $post_id, "_".$value, $_POST[$value] );
+            }else{
+                delete_post_meta($post_id, "_".$value);
+            }
+    
+        }
     }
-
-
 }
