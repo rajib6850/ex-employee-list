@@ -1,0 +1,166 @@
+
+
+  
+  #ex_employee_card_container {
+    align-items: center;
+    justify-content: center;
+  }
+  
+  
+  #ex_employee_card_container .slick-slide{
+      height: fit-content;
+  }
+  
+  
+  #ex_employee_card_container .card div img {
+    max-width: 100%;
+    display: block;
+  }
+  #ex_employee_card_container .card ul {
+    list-style: none;
+  }
+  
+  /* Utilities */
+  #ex_employee_card_container .card::after,
+  #ex_employee_card_container .card img {
+    border-radius: 50%;
+  }
+  
+  #ex_employee_card_container .card,
+  #ex_employee_card_container .card .infos .stats {
+    display: flex;
+  }
+  
+  #ex_employee_card_container .card {
+    padding: 2.5em 2em;
+    border-radius: 10px;
+    background-color: rgba(255, 255, 255, .5);
+    /* box-shadow: 0 0 30px rgba(0, 0, 0, .15); */
+    margin: 1em;
+    position: relative;
+    transform-style: preserve-3d;
+    overflow: hidden;
+    border: 1px solid rgba(0, 0, 0, 0.09);
+  }
+  #ex_employee_card_container .card::before,
+  #ex_employee_card_container .card::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+  }
+  #ex_employee_card_container .card::before {
+    width: 100%;
+    height: 100%;
+    border: 1px solid #FFF;
+    border-radius: 10px;
+    top: -.7em;
+    left: -.7em;
+  }
+  #ex_employee_card_container .card::after {
+    height: 15em;
+    width: 15em;
+    background-color: #4172f5aa;
+    top: -8em;
+    right: -8em;
+    box-shadow: 2em 6em 0 -3em #FFF
+  }
+  
+  #ex_employee_card_container .card img {
+    width: 8em;
+    min-width: 80px;
+    box-shadow: 0 0 0 5px #FFF;
+  }
+  
+  #ex_employee_card_container .card .infos {
+    margin-right: 1.5em;
+  }
+  
+  #ex_employee_card_container .card .infos .name {
+    margin-bottom: 1em;
+  }
+  #ex_employee_card_container .card .infos .name h2 {
+    font-size: 1.3em;
+  }
+  #ex_employee_card_container .card .infos .name h4 {
+    font-size: .8em;
+    color: #333
+  }
+  
+  #ex_employee_card_container .card .infos .text {
+    font-size: .9em;
+    margin-bottom: 1em;
+  }
+  
+  #ex_employee_card_container .card .infos .text p{
+
+    margin: 0 !important;
+    padding: 0 !important;
+    font-family: 'Montserrat', sans-serif;
+
+  }
+
+  #ex_employee_card_container .card .infos .stats {
+    margin-bottom: 1em;
+  }
+  #ex_employee_card_container .card .infos .stats li {
+    min-width: 5em;
+  }
+  #ex_employee_card_container .card .infos .stats li h3 {
+    font-size: .99em;
+  }
+  #ex_employee_card_container .card .infos .stats li h4 {
+    font-size: .75em;
+  }
+  
+  #ex_employee_card_container .card .links{
+      text-align: center;
+  }
+  #ex_employee_card_container .card .links a {
+    font-family: 'Montserrat', sans-serif;
+    min-width: 120px;
+    padding: .5em;
+    border: 1px solid #222;
+    border-radius: 5px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all .25s linear;
+    text-decoration: none;
+  }
+  #ex_employee_card_container .card  .links .follow,
+  #ex_employee_card_container .card  .links .view:hover {
+    background-color: #222;
+    color: #FFF;
+  }
+  #ex_employee_card_container .card .links .view,
+  #ex_employee_card_container .card .links .follow:hover{
+    background-color: transparent;
+    color: #222;
+  }
+  
+  @media screen and (max-width: 450px) {
+    #ex_employee_card_container .card {
+      display: block;
+    }
+    #ex_employee_card_container .card .infos {
+      margin-left: 0;
+      margin-top: 1.5em;
+    }
+    #ex_employee_card_container .card .links a {
+      min-width: 100px;
+    }
+  }
+  
+
+  .slick-prev, .slick-next{
+    z-index: 999;
+  }
+
+  .slick-prev:before, .slick-next:before {
+    font-family: 'slick';
+    font-size: 34px;
+    line-height: 1;
+    opacity: .75;
+    color: #ccc;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}

@@ -14,11 +14,6 @@
                     <li class="active">
                         <div>
                             <label for="employee_name">Name:</label>
-                            <?php 
-
-                                echo $employee_salary;                            
-                            
-                            ?>
                             <input type="text" name="employee_name"  value="<?php echo $employee_name; ?>" id="employee_name" placeholder="Enter employee full name" >
                             
                             <label for="employee_call">Phone:</label>

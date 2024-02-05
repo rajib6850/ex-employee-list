@@ -1,7 +1,6 @@
 <?php
 
-
-
+// Main Class 
 final class ClassEmployeeList
 {
 
@@ -14,7 +13,9 @@ final class ClassEmployeeList
         add_action('init', [$this, 'ex_employee_default_init']);
         add_action('add_meta_boxes', [$this, 'add_meta_box_for_employee_info']);
         add_action('admin_enqueue_scripts', [$this, 'add_style_and_script_file_for_employee_metabox']);
+        add_action('wp_enqueue_scripts', [$this, 'add_style_and_js_file']);
         add_action('save_post', [$this, 'ex_employee_metadata_save']);
+        add_shortcode( 'ex-employee-list', [$this, 'ex_employee_list' ]);
 
         if (!function_exists('get_plugin_data')) {
             require_once(ABSPATH . 'wp-admin/includes/plugin.php');
@@ -28,7 +29,19 @@ final class ClassEmployeeList
         wp_enqueue_script('jquery');
         wp_enqueue_script('ex_employee_bootstra_file', PLUGIN_URL . "assets/js/bootstrap.min.js", ['jquery'],  $this->version, true);
         wp_enqueue_script("ex_employee_custom_script", PLUGIN_URL . "assets/js/custom.js", ['jquery'], $this->version, true);
+
+
         wp_enqueue_style('ex_employee_style_file', PLUGIN_URL . 'assets/css/style.css', [], $this->version, 'all');
+    }
+
+    public function add_style_and_js_file(){
+        wp_enqueue_script( 'ex-slick-slider-js', PLUGIN_URL."assets/js/slick.min.js", ['jquery'], $this->version, true );
+        wp_enqueue_script('ex_employee_custom_js', PLUGIN_URL.'assets/js/custom.js', ['jquery', 'ex-slick-slider-js'], $this->version, true);
+
+        wp_enqueue_style( 'slick-slider-css', PLUGIN_URL."assets/css/slick.css", [], $this->version, 'all' );
+        wp_enqueue_style( 'slick-slider-theme-css', PLUGIN_URL."assets/css/slick-theme.css", [], $this->version, 'all' );
+        wp_enqueue_style( 'ex_employee_style', PLUGIN_URL."assets/css/employee.css", [], $this->version, 'all' );
+
     }
 
 
@@ -71,7 +84,7 @@ final class ClassEmployeeList
             'description' => __('Usefull employee plugin', 'ex-employee-list'),
             'labels' => $labels,
             'menu_icon' => 'dashicons-universal-access-alt',
-            'supports' => array('title', 'editor', 'thumbnail'),
+            'supports' => array('title', 'thumbnail'),
             'taxonomies' => array('category', 'post_tag'),
             'hierarchical' => false,
             'exclude_from_search' => true,
@@ -143,13 +156,10 @@ final class ClassEmployeeList
     
     
         foreach ($employee_info as $value) {
-            $checkValue = get_post_meta($post->ID, '_'.$value, true);
-    
-    
+            $checkValue = get_post_meta($post->ID, '_'.$value, true);       
             if(isset($checkValue)){
                 $$value = $checkValue;
-            }
-    
+            }    
         }
 
         require_once PLUGIN_DIR."template/employee-info-metabox-html-output.php";
@@ -161,7 +171,7 @@ final class ClassEmployeeList
         // prefix
         $prefix = "_employee_";
 
-        /* Verify the nonce before proceeding. \*/
+        /* Verify the nonce before proceeding. \*/  
         if(!isset($_POST['ex_metabox_nonce']) || wp_verify_nonce( 'ex_metabox_nonce', ' employee_metabox_verify' )){
             return ;
         }
@@ -185,16 +195,31 @@ final class ClassEmployeeList
         ];
         
         foreach ($employee_info as $value) {
-
             $$value = isset($_POST[$value]) ? sanitize_text_field($_POST[$value]) : '';
-
-
             if($$value != ''){
                 update_post_meta( $post_id, "_".$value, $_POST[$value] );
             }else{
                 delete_post_meta($post_id, "_".$value);
-            }
-    
+            }    
         }
     }
+
+
+    public function ex_employee_list($atts, $content){
+        
+        $employees = new  WP_Query(
+            [
+              'post_type'           => 'ex_employee',
+              'posts_per_page'      => 10,
+              'post_status'         => 'publish'
+            ]
+
+          );
+
+        
+        
+        require_once PLUGIN_DIR."shortcode/ex-employee-slider-html-output.php";
+
+    }
+
 }
