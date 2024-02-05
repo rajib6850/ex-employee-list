@@ -137,7 +137,8 @@ final class ClassEmployeeList
             'employee_date_of_birth',
             'employee_address',
             'employee_job_title',
-            'employee_salary'
+            'employee_salary',            
+            'employee_department',
         ];
     
     
@@ -170,7 +171,6 @@ final class ClassEmployeeList
             return;
         }
 
-
         // Create an array with metabox input name
         $employee_info = [
             'employee_name',
@@ -180,12 +180,14 @@ final class ClassEmployeeList
             'employee_date_of_birth',
             'employee_address',
             'employee_job_title',
-            'employee_salary'
+            'employee_salary',            
+            'employee_department',      
         ];
         
         foreach ($employee_info as $value) {
 
             $$value = isset($_POST[$value]) ? sanitize_text_field($_POST[$value]) : '';
+
 
             if($$value != ''){
                 update_post_meta( $post_id, "_".$value, $_POST[$value] );

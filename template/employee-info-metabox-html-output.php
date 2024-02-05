@@ -1,3 +1,5 @@
+
+
 <div class="ex_tab_container">
     <div class="naccs">
         <div class="grid">
@@ -12,6 +14,11 @@
                     <li class="active">
                         <div>
                             <label for="employee_name">Name:</label>
+                            <?php 
+
+                                echo $employee_salary;                            
+                            
+                            ?>
                             <input type="text" name="employee_name"  value="<?php echo $employee_name; ?>" id="employee_name" placeholder="Enter employee full name" >
                             
                             <label for="employee_call">Phone:</label>
@@ -43,6 +50,36 @@
                             <label for="employee_salary">Salary:</label>
                             <input type="number" value="<?php echo $employee_salary; ?>" name="employee_salary" id="employee_salary" placeholder="Enter employee salary" >
                             
+
+                            <label for="employee_department">Department:</label>
+
+                            <?php  
+                            
+                                // Department Array
+
+                                $departments =  array (
+                                    'Human Resources',
+                                    'Marketing',
+                                    'Sales',
+                                    'Finance',
+                                    'Information Technology',
+                                    'Customer Support',
+                                    'Research and Development',
+                                    'Administration',
+                                    'Operations',
+                                    'Legal',
+                                );
+                            
+                            ?>
+                            <select name="employee_department" id="employee_department">
+                                <option value="">Select Department</option>
+                                
+                                <?php foreach($departments as $department): ?>
+                                <option <?php selected( $employee_department, $department ); ?> value="<?= $department ?>"><?= $department ?></option>
+                                <?php endforeach; ?>
+
+                            </select>
+
                         </div>
                     </li>
                 </ul>
